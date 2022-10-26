@@ -1,15 +1,15 @@
 from typing import List, Union
-from datetime import datetime, timedelta
 
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-import crud, models, schemas
-from database import SessionLocal, engine
-from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from . import crud, models, schemas
+from .database import SessionLocal, engine
+from .config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 models.Base.metadata.create_all(bind=engine)
 
