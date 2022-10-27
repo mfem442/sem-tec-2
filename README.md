@@ -1,8 +1,6 @@
 # Conectando el mundo web
 - Proyecto de Semana Tec
-- María Fernanda Elizalde Macías A01634135
-
-# Actividad 3. Seguridad Web
+- María Fernanda Elizalde Macías A0163413
 
 Comando para correr actividad en la terminal:
 > uvicorn backend.main:app --reload
