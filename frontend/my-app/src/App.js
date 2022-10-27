@@ -18,6 +18,12 @@ function App() {
           Learn React
         </a>
       </header>
+      
+    <body>
+
+      <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+      <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    </body>
     </div>
   );
 }
