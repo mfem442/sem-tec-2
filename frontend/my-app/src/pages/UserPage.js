@@ -1,68 +1,150 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { API_URL } from "../config";
 
+function User({ user, editable, deleteUser }) {
+	const [active, setActive] = useState(user.is_active);
+	function clickEvent(e) {
+		setActive(!active);
+	}
 
-function User({user}){
-  const [active, setActive] = useState(user.is_active)
-  function clickEvent(e){
-    setActive(!active);
-  }
+	function clickDelete() {
+		deleteUser(user.id);
+	}
 
-  function clickProfile(e){
-    
-  }
-  return(
-    <a href="#" className={"list-group-item list-group-item-action" +(active ? " active" : "")} aria-current="true" key = "{user.name}" >
-        <div className="d-flex w-100 justify-content-between">
-            <h6 className="mb-1">{user.name}</h6>
-            <small>{active ? "Active": "Inactive"}</small>
-          
-          </div>
-          <p className="mb-1">{user.email}</p>
-          <button onClick={clickEvent} type="button" className={active ? "btn btn-light": "btn btn-outline-primary"}>{active ? "Deactivate" : "Activate"} </button>    
-
-          <br></br>
-          </a>
-          
-    )
-  }
-    
-  
-
-
-function UserList({users}){
-  const [active, setActive] = useState()
-  return <div className="list-group">
-    {users.map((user) => <User user = {user} key = {user.name} ></User> )}
-    <br></br>
-  </div>
-  
+	return (
+		<a
+			href="#"
+			className={
+				"list-group-item list-group-item-action" +
+				(active ? " active" : "")
+			}
+			aria-current="true"
+		>
+			<div className="d-flex w-100 justify-content-between">
+				<h5 className="mb-1">{user.github_user}</h5>
+				<small>{active ? "Active" : "Inactive"}</small>
+			</div>
+			<p className="mb-1">{user.email}</p>
+			{editable ? (
+				<>
+					<button
+						onClick={clickEvent}
+						type="button"
+						className={
+							active
+								? "btn btn-primary"
+								: "btn btn-outline-primary"
+						}
+					>
+						{active ? "Deactivate" : "Activate"}
+					</button>
+					<button
+						onClick={clickDelete}
+						type="button"
+						className="btn btn-danger"
+					>
+						Delete
+					</button>
+				</>
+			) : (
+				<></>
+			)}
+		</a>
+	);
 }
 
-
-const userList =[
-  { name:"Paola",
-  is_active: true,
-  email:"paola@tec.mx"
-  }, 
-  { name:"Hector",
-  is_active: false,
-  email:"hector@tec.mx"
-  }, 
-  { name:"Vanessa",
-  is_active: true,
-  email:"vanessa@tec.mx"
-  }
-]
-
-function UserPage() {
-  return (
-    <>  
-    <h1>User List</h1>
-    <UserList users={userList}></UserList>
-    
-    </>
-  );
+function UserList({ users, editable, deleteUser }) {
+	return (
+		<div className="list-group">
+			{users.map((user) => (
+				<User
+					user={user}
+					editable={editable}
+					deleteUser={deleteUser}
+					key={user.email}
+				></User>
+			))}
+		</div>
+	);
 }
 
-export default UserPage;
+function UserForm({ createUser }) {
+	let email = useRef("");
+	let password = useRef("");
+	let githubUser = useRef("");
+
+	function clickCreate(e) {
+		e.preventDefault();
+		let data = {
+			email: email.current.value,
+			password: password.current.value,
+			github_user: githubUser.current.value,
+		};
+		createUser(data);
+		email.current.value = "";
+		password.current.value = "";
+		githubUser.current.value = "";
+	}
+
+	return (
+		<form onSubmit={clickCreate}>
+			<div className="mb-3">
+				<label htmlFor="exampleInputEmail" className="form-label">
+					Email address
+				</label>
+				<input
+					ref={email}
+					type="email"
+					className="form-control"
+					id="exampleInputEmail"
+					aria-describedby="emailHelp"
+				></input>
+			</div>
+			<div className="mb-3">
+				<label htmlFor="exampleInputPassword1" className="form-label">
+					Password
+				</label>
+				<input
+					ref={password}
+					type="password"
+					className="form-control"
+					id="exampleInputPassword1"
+				></input>
+			</div>
+			<div className="mb-3">
+				<label htmlFor="github-user" className="form-label">
+					Github User
+				</label>
+				<input
+					ref={githubUser}
+					type="text"
+					className="form-control"
+					id="github-user"
+				></input>
+			</div>
+			<button type="submit" className="btn btn-primary">
+				Create
+			</button>
+		</form>
+	);
+}
+
+function UserPage({ token }) {
+	const [users, setUsers] = useState([]);
+	useEffect(() => {
+		let successful = false;
+		fetch(API_URL + "/users/").then((data) => {
+			if (data.status === 200) {
+				successful = true;
+			}
+		});
+	});
+	return (
+		<>
+			<h1>User List</h1>
+			<UserList users={userList}></UserList>
+		</>
+	);
+}
+
+export default UserPage;
