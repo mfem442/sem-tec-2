@@ -1,33 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
-import Button from '@mui/material/Button';
+import { Link } from "react-router-dom";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    return (
+      <>
+      <nav className="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+    <div className="container-fluid">
+      <a className="navbar-brand" href="#">Web App</a>
+      <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <span className="navbar-toggler-icon"></span>
+      </button>
 
-      </header>
-      
-    <body>
-      <Button variant="contained">Hello World</Button>
-      <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-      <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    </body>
+      <div className="collapse navbar-collapse" id="navbarsExample02">
+        <ul className="navbar-nav me-auto">
+          <li className="nav-item">
+            <a className="nav-link active" aria-current="page" href="/">Home</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" href="/login">Login</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" href="/users">Users</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" href="/profile">Profile</a>
+          </li>
+        </ul>
+        
+      </div>
     </div>
-  );
-}
+  </nav>
+        <br></br>
+        
+      <h1>Bienvenido</h1>
+      <Link to = "/users">
+      <button type="button" className="btn btn-primary">Go to Users</button>
+      </Link>
 
-export default App;
+      <br></br>
+      <br></br>
+      <Link to = "/login">
+      <button type="button" className="btn btn-primary">Go to Login</button>
+      </Link>
+
+      <br></br>
+      <br></br>
+      <Link to = "/profile">
+      <button type="button" className="btn btn-primary">Go to Profile</button>
+      </Link>
+      </>
+      
+    );
+  }
+  
+  export default App;
