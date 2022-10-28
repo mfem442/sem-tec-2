@@ -1,16 +1,18 @@
-from typing import List, Union
-
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 from .config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from fastapi.responses import HTMLResponse
+
+from typing import List, Union
+from fastapi import Depends, FastAPI, HTTPException, status
+from datetime import datetime, timedelta
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -21,12 +23,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 app = FastAPI()
 
 # Dependency
+
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -35,13 +40,15 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def authenticate_user(db:Session, email: str, password: str):
+
+def authenticate_user(db: Session, email: str, password: str):
     user = crud.get_user_by_email(db, email=email)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
@@ -52,6 +59,7 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
@@ -67,16 +75,18 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         token_data = schemas.TokenData(email=email)
     except JWTError:
         raise credentials_exception
-    user = schemas.User.from_orm(crud.get_user_by_email(db, email=token_data.email))
+    user = schemas.User.from_orm(
+        crud.get_user_by_email(db, email=token_data.email))
     if user is None:
         raise credentials_exception
     return user
 
+
 async def get_current_active_user(current_user: schemas.User = Depends(get_current_user)):
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    #TODO convert db_user
-    
+    # TODO convert db_user
+
     return current_user
 
 
@@ -95,13 +105,14 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @app.get("/users/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
     return current_user
 
 
 @app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, token:str =Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def create_user(user: schemas.UserCreate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -124,7 +135,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/users/{user_id}/items/", response_model=schemas.Item)
 def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, token:str =Depends(oauth2_scheme),db: Session = Depends(get_db)
+    user_id: int, item: schemas.ItemCreate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     return crud.create_user_item(db=db, item=item, user_id=user_id)
 
@@ -133,6 +144,7 @@ def create_item_for_user(
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = crud.get_items(db, skip=skip, limit=limit)
     return items
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_items():
