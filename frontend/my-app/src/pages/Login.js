@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { API_URL } from "../config";
 
-function Login() {
+function Login({ setToken, setUserData }) {
 	const location = useLocation();
 	const urlParams = new URLSearchParams(location.search);
 	const navigate = useNavigate();
