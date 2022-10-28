@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { useRef } from 'react';
-
+import { API_URL } from '../config';
 
 function Login() {
     const email = useRef("")
@@ -10,6 +10,13 @@ function Login() {
         e.preventdefault();
         console.log(email.current.value)
         console.log(password.current.value)
+        fetch(API_URL+"/token", {
+          method: "POST",
+          body: new URLSearchParams({
+            'username':email.current.value,
+            'password': password.current.value,
+          }).then((data) => console.log(data))
+        })
         alert("Login exitoso")
 
     }
@@ -36,7 +43,6 @@ function Login() {
     <Link to = "/">
       <button type="button" className="btn btn-primary">Sign in</button>
       </Link>
-    <p className="mt-5 mb-3 text-muted">© 2017-2022</p>
   </form>
       
       </>
