@@ -133,16 +133,88 @@ function UserPage({ token }) {
 	const [users, setUsers] = useState([]);
 	useEffect(() => {
 		let successful = false;
-		fetch(API_URL + "/users/").then((data) => {
-			if (data.status === 200) {
-				successful = true;
-			}
-		});
-	});
+		fetch(API_URL + "/users/")
+			.then((data) => {
+				if (data.status === 200) {
+					successful = true;
+				}
+				return data.json();
+			})
+			.then((data) => {
+				if (successful) {
+					setUsers(data);
+				} else {
+					throw new Error(data.detail);
+				}
+			})
+			.catch((data) => alert(data));
+	}, []);
+
+	function deleteUser(user_id) {
+		let successful = false;
+		fetch(API_URL + "/users/" + user_id, {
+			method: "DELETE",
+		})
+			.then((data) => {
+				if (data.status === 200) {
+					successful = true;
+				}
+				return data.json();
+			})
+			.then((data) => {
+				if (successful) {
+					setUsers(users.filter((user) => user.id !== user_id));
+				} else {
+					throw new Error(data.detail);
+				}
+			})
+			.catch((data) => alert(data));
+	}
+
+	function createUser(userData) {
+		let successful = false;
+		fetch(API_URL + "/users/", {
+			method: "POST",
+			headers: {
+				Authorization: "Bearer " + token,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(userData),
+		})
+			.then((data) => {
+				if (data.status === 200) {
+					successful = true;
+				}
+				return data.json();
+			})
+			.then((data) => {
+				if (successful) {
+					setUsers([...users, data]);
+				} else {
+					throw new Error(data.detail);
+				}
+			})
+			.catch((data) => alert(data.detail));
+	}
+	console.log("Rendering User List");
+
 	return (
 		<>
 			<h1>User List</h1>
-			<UserList users={userList}></UserList>
+			<UserForm></UserForm>
+			<UserList
+				users={users}
+				editable={!!token}
+				deleteUser={deleteUser}
+			></UserList>
+			{!!token ? (
+				<>
+					<h3>Add new user</h3>
+					<UserForm createUser={createUser}></UserForm>
+				</>
+			) : (
+				<></>
+			)}
 		</>
 	);
 }
