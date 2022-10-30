@@ -20,12 +20,12 @@ function Profile({ userData }) {
 							¡Hola!
 						</h1>
 						<h3 className="card-text display-5 font-monospace text-danger">
-							{userData ? userData.name : "mfem442"}
+							{userData ? userData.name : "Usuario"}
 						</h3>
 						<div className="col-lg-6 mx-auto">
 							<p className="card-text lead mb-4 font-monospace text-danger">
-								Email:{" "}
-								{userData ? userData.email : "mafer@tec.mx"}
+								Github:{" "}
+								{userData ? userData.html_url : "No disponible"}
 							</p>
 						</div>
 					</div>

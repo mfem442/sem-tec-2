@@ -13,6 +13,8 @@ function User({ user, editable, deleteUser }) {
 	}
 
 	return (
+		<>
+		<div style={{paddingTop:"1em"}}></div>
 		<a
 			href="#"
 			className={
@@ -52,7 +54,7 @@ function User({ user, editable, deleteUser }) {
 
 			<br></br>
 		</a>
-	);
+	</>);
 }
 
 function UserList({ users, editable, deleteUser }) {

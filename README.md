@@ -1,6 +1,7 @@
 # Conectando el mundo web
 - Proyecto de Semana Tec
 - María Fernanda Elizalde Macías A0163413
+- Paola Elizabeth Gómez Martínez A01633772
 
 # Actividad 3. Seguridad Web
 Comando para correr actividad en la terminal:
