@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function Profile({ name, email }) {
+function Profile({ userData }) {
 	return (
 		<>
 			<div className="card border-white mb-3">
@@ -20,11 +20,12 @@ function Profile({ name, email }) {
 							¡Hola!
 						</h1>
 						<h3 className="card-text display-5 font-monospace text-danger">
-							{name}
+							{userData ? userData.name : "mfem442"}
 						</h3>
 						<div className="col-lg-6 mx-auto">
 							<p className="card-text lead mb-4 font-monospace text-danger">
-								Email: {email}
+								Email:{" "}
+								{userData ? userData.email : "mafer@tec.mx"}
 							</p>
 						</div>
 					</div>

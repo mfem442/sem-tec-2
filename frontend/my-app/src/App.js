@@ -160,6 +160,7 @@ function TopBar({ userLogged, logout, userData }) {
 									</li>
 								</ul>
 							</div>
+							<div style={{ paddingRight: "1em" }}></div>
 							<button
 								className="btn btn-outline-light me-2"
 								onClick={logout}
