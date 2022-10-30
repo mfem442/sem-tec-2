@@ -118,17 +118,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users/me/", response_model=schemas.User)
-async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
-    return current_user
-
-
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_user(db=db, user=user, hashed_password=get_password_hash(user.password))
+
+
+@app.get("/users/me/", response_model=schemas.User)
+async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
+    return current_user
 
 
 @app.get("/users/", response_model=List[schemas.User])

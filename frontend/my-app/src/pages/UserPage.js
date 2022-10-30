@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { API_URL } from "../config";
+import React from "react";
 
 function User({ user, editable, deleteUser }) {
 	const [active, setActive] = useState(user.is_active);
@@ -7,7 +8,7 @@ function User({ user, editable, deleteUser }) {
 		setActive(!active);
 	}
 
-	function clickDelete() {
+	function ClickDelete() {
 		deleteUser(user.id);
 	}
 
@@ -19,9 +20,10 @@ function User({ user, editable, deleteUser }) {
 				(active ? " active" : "")
 			}
 			aria-current="true"
+			key="{user.name}"
 		>
 			<div className="d-flex w-100 justify-content-between">
-				<h5 className="mb-1">{user.github_user}</h5>
+				<h6 className="mb-1">{user.id}</h6>
 				<small>{active ? "Active" : "Inactive"}</small>
 			</div>
 			<p className="mb-1">{user.email}</p>
@@ -31,17 +33,15 @@ function User({ user, editable, deleteUser }) {
 						onClick={clickEvent}
 						type="button"
 						className={
-							active
-								? "btn btn-primary"
-								: "btn btn-outline-primary"
+							active ? "btn btn-light" : "btn btn-outline-primary"
 						}
 					>
-						{active ? "Deactivate" : "Activate"}
+						{active ? "Deactivate" : "Activate"}{" "}
 					</button>
 					<button
-						onClick={clickDelete}
+						onClick={ClickDelete}
 						type="button"
-						className="btn btn-danger"
+						className={"btn btn-danger"}
 					>
 						Delete
 					</button>
@@ -49,6 +49,8 @@ function User({ user, editable, deleteUser }) {
 			) : (
 				<></>
 			)}
+
+			<br></br>
 		</a>
 	);
 }
@@ -72,40 +74,42 @@ function UserForm({ createUser }) {
 	let email = useRef("");
 	let password = useRef("");
 	let githubUser = useRef("");
-
 	function clickCreate(e) {
 		e.preventDefault();
+		console.log("Creating user");
 		let data = {
 			email: email.current.value,
 			password: password.current.value,
-			github_user: githubUser.current.value,
+			githubUser: githubUser.current.value,
 		};
 		createUser(data);
 		email.current.value = "";
 		password.current.value = "";
 		githubUser.current.value = "";
 	}
-
 	return (
 		<form onSubmit={clickCreate}>
 			<div className="mb-3">
-				<label htmlFor="exampleInputEmail" className="form-label">
+				<label htmlFor="exampleInputEmail1" className="form-label">
 					Email address
 				</label>
 				<input
 					ref={email}
 					type="email"
 					className="form-control"
-					id="exampleInputEmail"
+					id="exampleInputEmail1"
 					aria-describedby="emailHelp"
 				></input>
 			</div>
 			<div className="mb-3">
-				<label htmlFor="exampleInputPassword1" className="form-label">
+				<label
+					ref={password}
+					htmlFor="exampleInputPassword1"
+					className="form-label"
+				>
 					Password
 				</label>
 				<input
-					ref={password}
 					type="password"
 					className="form-control"
 					id="exampleInputPassword1"
@@ -113,7 +117,7 @@ function UserForm({ createUser }) {
 			</div>
 			<div className="mb-3">
 				<label htmlFor="github-user" className="form-label">
-					Github User
+					GitHub User
 				</label>
 				<input
 					ref={githubUser}
@@ -132,16 +136,16 @@ function UserForm({ createUser }) {
 function UserPage({ token }) {
 	const [users, setUsers] = useState([]);
 	useEffect(() => {
-		let successful = false;
+		let succesful = false;
 		fetch(API_URL + "/users/")
 			.then((data) => {
 				if (data.status === 200) {
-					successful = true;
+					succesful = true;
 				}
 				return data.json();
 			})
 			.then((data) => {
-				if (successful) {
+				if (succesful) {
 					setUsers(data);
 				} else {
 					throw new Error(data.detail);
@@ -150,19 +154,19 @@ function UserPage({ token }) {
 			.catch((data) => alert(data));
 	}, []);
 
-	function deleteUser(user_id) {
-		let successful = false;
+	function deleteUser({ user_id }) {
+		let succesful = false;
 		fetch(API_URL + "/users/" + user_id, {
 			method: "DELETE",
 		})
 			.then((data) => {
 				if (data.status === 200) {
-					successful = true;
+					succesful = true;
 				}
 				return data.json();
 			})
 			.then((data) => {
-				if (successful) {
+				if (succesful) {
 					setUsers(users.filter((user) => user.id !== user_id));
 				} else {
 					throw new Error(data.detail);
@@ -172,36 +176,36 @@ function UserPage({ token }) {
 	}
 
 	function createUser(userData) {
-		let successful = false;
+		let succesful = false;
 		fetch(API_URL + "/users/", {
 			method: "POST",
 			headers: {
-				Authorization: "Bearer " + token,
+				Authorization: "Bearer" + token,
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(userData),
+			data: JSON.stringify(userData),
 		})
 			.then((data) => {
 				if (data.status === 200) {
-					successful = true;
+					succesful = true;
 				}
 				return data.json();
 			})
 			.then((data) => {
-				if (successful) {
+				if (succesful) {
 					setUsers([...users, data]);
 				} else {
 					throw new Error(data.detail);
 				}
 			})
-			.catch((data) => alert(data.detail));
+			.catch((data) => alert(data));
 	}
-	console.log("Rendering User List");
 
 	return (
 		<>
+			<br></br>
+
 			<h1>User List</h1>
-			<UserForm></UserForm>
 			<UserList
 				users={users}
 				editable={!!token}
@@ -209,7 +213,7 @@ function UserPage({ token }) {
 			></UserList>
 			{!!token ? (
 				<>
-					<h3>Add new user</h3>
+					<h3>Add New User</h3>
 					<UserForm createUser={createUser}></UserForm>
 				</>
 			) : (

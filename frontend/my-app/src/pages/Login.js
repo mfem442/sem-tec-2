@@ -10,7 +10,7 @@ function Login({ setToken, setUserData }) {
 	const email = useRef("");
 	const password = useRef("");
 	function submitLogin(e) {
-		e.preventdefault();
+		//e.preventdefault();
 		let successful = false;
 		fetch(API_URL + "/token", {
 			method: "POST",
@@ -18,52 +18,47 @@ function Login({ setToken, setUserData }) {
 				username: email.current.value,
 				password: password.current.value,
 			}),
-		})
-			.then((data) => {
-				if (data.status === 200) {
-					successful = true;
-				}
-				return data.json();
-			})
-			.then((data) => {
-				if (data.status === 200) {
-					successful = true;
-				}
-				return data.json();
-			})
-			.then((data) => {
-				if (successful) {
-					localStorage.setItem("token", data.access_token);
-					fetch(API_URL + "/users/me/", {
-						headers: {
-							Authorization: "Bearer " + data.access_token,
-						},
-					})
-						.then((data) => {
-							return data.json();
+		}).then((data) => {
+			if (data.status === 200) {
+				successful = true;
+			}
+			data.json()
+
+				.then((data) => {
+					if (successful) {
+						localStorage.setItem("token", data.access_token);
+						fetch(API_URL + "/users/me/", {
+							headers: {
+								Authorization: "Bearer " + data.access_token,
+							},
 						})
-						.then((data) => {
-							fetch(
-								"https://api.github.com/users/" +
-									data.github_user
-							)
-								.then((data) => data.json())
-								.then((data) => {
-									localStorage.setItem(
-										"userData",
-										JSON.stringify(data)
-									);
-									setUserData(data);
-									setToken(localStorage.getItem("token"));
-									navigate(urlParams.get("next") || "/");
-								});
-						});
-				} else {
-					throw new Error(data.detail);
-				}
-			})
-			.catch((data) => alert(data));
+							.then((data) => {
+								data.json();
+							})
+							.then((data) => {
+								fetch(
+									"https://api.github.com/users/" +
+										data.github_user
+								)
+									.then((data) => data.json())
+									.then((data) => {
+										localStorage.setItem(
+											"userData",
+											JSON.stringify(data)
+										);
+										setUserData(data);
+										setToken(localStorage.getItem("token"));
+										navigate(urlParams.get("next") || "/");
+									});
+							});
+					} else {
+						throw new Error(data.detail);
+					}
+				})
+				.catch((data) => alert(data));
+		});
 	}
+
 	return (
 		<>
 			<h1> Sign in </h1>
@@ -78,7 +73,7 @@ function Login({ setToken, setUserData }) {
 						id="floatingInput"
 						placeholder="name@example.com"
 					/>
-					<label for="floatingInput">Email address</label>
+					<label htmlFor="floatingInput">Email address</label>
 				</div>
 
 				<div className="form-floating">
@@ -89,7 +84,7 @@ function Login({ setToken, setUserData }) {
 						id="floatingPassword"
 						placeholder="Password"
 					/>
-					<label for="floatingPassword">Password</label>
+					<label htmlFor="floatingPassword">Password</label>
 				</div>
 
 				<div className="checkbox mb-3">

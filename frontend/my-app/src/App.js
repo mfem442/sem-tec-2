@@ -1,112 +1,210 @@
-import { Link, useLocation } from "react-router-dom";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+	Link,
+	useLocation,
+	BrowserRouter,
+	Routes,
+	Route,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import UserPage from "./pages/UserPage";
 import MainPage from "./pages/MainPage";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
-function Topbar() {
-	let location = useLocation;
+function TopBar({ userLogged, logout, userData }) {
+	let location = useLocation();
 	return (
-		<>
-			<header>
-				<nav
-					className="navbar navbar-expand navbar-dark bg-dark sticky-top"
-					aria-label="Second navbar example"
-				>
-					<div className="container-fluid">
-						<Link
-							className="nav-link"
-							to="/"
-							style={{
-								fontWeight: "bold",
-								textDecoration: "none",
-								color: "white",
-							}}
-						>
-							Semana Tec
-						</Link>
-						<button
-							className="navbar-toggler"
-							type="button"
-							data-bs-toggle="collapse"
-							data-bs-target="#navbarsExample02"
-							aria-controls="navbarsExample02"
-							aria-expanded="false"
-							aria-label="Toggle navigation"
-						>
-							<span className="navbar-toggler-icon"></span>
-						</button>
+		<header className="p-3 text-bg-dark">
+			<div className="container">
+				<div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+					<a
+						href="/"
+						className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+					></a>
 
-						<div
-							className="collapse navbar-collapse"
-							id="navbarsExample02"
-						>
-							<ul className="navbar-nav me-auto">
-								<li className="nav-item">
-									<Link
-										className="nav-link"
-										to="/login"
-										style={{
-											textDecoration: "none",
-											color: "gray",
-										}}
-									>
-										Login
-									</Link>
-								</li>
-								<li className="nav-item">
-									<Link
-										className="nav-link"
-										to="/users"
-										style={{
-											textDecoration: "none",
-											color: "gray",
-										}}
-									>
-										Usuarios
-									</Link>
-								</li>
-								<li className="nav-item">
-									<Link
-										className="nav-link"
-										to="/profile"
-										style={{
-											textDecoration: "none",
-											color: "gray",
-										}}
-									>
-										Perfil
-									</Link>
-								</li>
-							</ul>
+					<ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+						<li>
+							<a
+								href="/"
+								className={
+									"nav-link px-2 text-secondary" +
+									(location.pathname === "/"
+										? "text-white"
+										: "text-secondary")
+								}
+							>
+								Inicio
+							</a>
+						</li>
+						<li>
+							<a
+								href="/users"
+								className={
+									"nav-link px-2 text-white" +
+									(location.pathname === "/users"
+										? "text-white"
+										: "text-secondary")
+								}
+							>
+								Usuarios
+							</a>
+						</li>
+						<li>
+							<a
+								href="/profile"
+								className={
+									"nav-link px-2 text-white" +
+									(location.pathname === "/profile"
+										? "text-white"
+										: "text-secondary")
+								}
+							>
+								Perfil
+							</a>
+						</li>
+					</ul>
+					{userLogged ? (
+						<>
+							<div style={{ paddingRight: "1em" }}>
+								{" "}
+								Hola, {userData ? userData.name : ""}
+							</div>
+							<div className="dropdown text-end">
+								<a
+									href="#"
+									className="d-block link-dar text-decoration-none dropdown-toogle"
+									data-bs-toggle="dropdown"
+								>
+									<img
+										src={userData.avatar_url}
+										alt="mdo"
+										width="32"
+										height="32"
+										className="rounded-circle"
+									></img>
+								</a>
+								<ul className="dropdown-menu text-snall">
+									<li>
+										{" "}
+										<a className="dropdown-item" href="#">
+											{" "}
+											New project...
+										</a>
+									</li>
+									<li>
+										{" "}
+										<a className="dropdown-item" href="#">
+											{" "}
+											Settings
+										</a>
+									</li>
+									<li>
+										{" "}
+										<a className="dropdown-item" href="#">
+											{" "}
+											Perfil
+										</a>
+									</li>
+									<li>
+										<hr className="dropdown-divider"></hr>
+									</li>
+									<li>
+										{" "}
+										<a className="dropdown-item" href="#">
+											{" "}
+											Sign out
+										</a>
+									</li>
+								</ul>
+							</div>
+							<button
+								className="btn btn-outline-light me-2"
+								onClick={logout}
+							>
+								Logout
+							</button>
+						</>
+					) : (
+						<div className="text-end">
+							<Link to={"/login?next=" + location.pathname}>
+								<button
+									type="button"
+									className="btn btn-outline-light me-2"
+								>
+									Login
+								</button>
+							</Link>
+							<button type="button" className="btn btn-warning">
+								Sign-up
+							</button>
+
+							<button
+								className="btn btn-outline-light me-2"
+								onClick={logout}
+							>
+								Logout
+							</button>
 						</div>
-					</div>
-				</nav>
-			</header>
-		</>
+					)}
+				</div>
+			</div>
+		</header>
 	);
 }
 
+function LandingPage() {
+	<>
+		<h1>Bienvenido</h1>
+		{console.log("landingpage")}
+	</>;
+}
+
 function App() {
+	const [token, setToken] = useState(localStorage.getItem("token"));
+	const [userData, setUserData] = useState(
+		JSON.parse(localStorage.getItem("userData"))
+	);
+	function logout() {
+		localStorage.removeItem("token");
+		setToken(null);
+		localStorage.removeItem("userData");
+		setUserData(null);
+	}
+
 	return (
 		<>
 			<BrowserRouter>
-				<Topbar></Topbar>
-				<Routes>
-					<Route path="/" element={<MainPage />}>
-						{" "}
-					</Route>
-					<Route path="/users" element={<UserPage />}>
-						{" "}
-					</Route>
-					<Route path="/login" element={<Login />}>
-						{" "}
-					</Route>
-					<Route path="/profile" element={<Profile />}></Route>
-				</Routes>
+				<TopBar
+					//userLogged={!!token}
+					logout={logout}
+					userData={userData}
+				></TopBar>
+				<div className="container py-3">
+					<Routes>
+						<Route path="/" element={<LandingPage />}>
+							{" "}
+						</Route>
+						<Route
+							path="/users"
+							element={<UserPage token={token} />}
+						>
+							{" "}
+						</Route>
+						<Route
+							path="/login"
+							element={
+								<Login
+									setToken={setToken}
+									setUserData={setUserData}
+								/>
+							}
+						>
+							{" "}
+						</Route>
+						<Route path="/profile" element={<Profile />}></Route>
+					</Routes>
+				</div>
 			</BrowserRouter>
 		</>
 	);
