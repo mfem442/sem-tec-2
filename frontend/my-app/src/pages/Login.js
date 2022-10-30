@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useRef } from "react";
 import { API_URL } from "../config";
 
@@ -9,56 +9,59 @@ function Login({ setToken, setUserData }) {
 	const navigate = useNavigate();
 	const email = useRef("");
 	const password = useRef("");
+
 	function submitLogin(e) {
 		//e.preventdefault();
-		let successful = false;
+		let succesful = false;
 		fetch(API_URL + "/token", {
 			method: "POST",
 			body: new URLSearchParams({
 				username: email.current.value,
 				password: password.current.value,
 			}),
-		}).then((data) => {
-			if (data.status === 200) {
-				successful = true;
-			}
-			data.json()
-
-				.then((data) => {
-					if (successful) {
+		})
+			.then((data) => {
+				if (data.status === 200) {
+					succesful = true;
+					console.log("se pudo");
+				} else {
+					console.log("no se puede");
+				}
+				data.json().then((data) => {
+					if (succesful) {
 						localStorage.setItem("token", data.access_token);
+						console.log("TOKENSET: " + data.access_token);
 						fetch(API_URL + "/users/me/", {
 							headers: {
-								Authorization: "Bearer " + data.access_token,
+								Authorization: "Bearer" + data.access_token,
 							},
-						})
-							.then((data) => {
-								data.json();
-							})
-							.then((data) => {
+						}).then((data) => {
+							console.log("DATASET1: " + data);
+							data.json().then((data) => {
 								fetch(
 									"https://api.github.com/users/" +
 										data.github_user
-								)
-									.then((data) => data.json())
-									.then((data) => {
+								).then((data) =>
+									data.json().then((data) => {
 										localStorage.setItem(
 											"userData",
 											JSON.stringify(data)
 										);
 										setUserData(data);
+										console.log("DATASET2: " + data);
 										setToken(localStorage.getItem("token"));
 										navigate(urlParams.get("next") || "/");
-									});
+									})
+								);
 							});
+						});
 					} else {
 						throw new Error(data.detail);
 					}
-				})
-				.catch((data) => alert(data));
-		});
+				});
+			})
+			.catch((data) => alert(data));
 	}
-
 	return (
 		<>
 			<h1> Sign in </h1>
@@ -75,7 +78,6 @@ function Login({ setToken, setUserData }) {
 					/>
 					<label htmlFor="floatingInput">Email address</label>
 				</div>
-
 				<div className="form-floating">
 					<input
 						ref={password}
@@ -89,12 +91,12 @@ function Login({ setToken, setUserData }) {
 
 				<div className="checkbox mb-3">
 					<label>
-						<input type="checkbox" value="remember-me" />
-						Remember me
+						<input type="checkbox" value="remember-me" /> Remember
+						me
 					</label>
 				</div>
-
-				<button className="w-100 btn btn-lg btn-primary" type="submit">
+				<Link to="/profile"></Link>
+				<button type="submit" className="btn btn-primary">
 					Sign in
 				</button>
 			</form>

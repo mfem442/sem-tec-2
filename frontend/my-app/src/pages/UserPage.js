@@ -204,13 +204,13 @@ function UserPage({ token }) {
 	return (
 		<>
 			<br></br>
-
 			<h1>User List</h1>
 			<UserList
 				users={users}
 				editable={!!token}
 				deleteUser={deleteUser}
 			></UserList>
+			<br></br>
 			{!!token ? (
 				<>
 					<h3>Add New User</h3>
