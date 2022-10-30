@@ -105,7 +105,7 @@ function TopBar({ userLogged, logout, userData }) {
 								¡Hola!{" "}
 								{userData
 									? //userData.name
-									  "María Fernanda Elizalde Macías"
+									  userData.name
 									: ""}
 							</div>
 							<div className="dropdown text-end">
@@ -114,16 +114,24 @@ function TopBar({ userLogged, logout, userData }) {
 									className="d-block link-dar text-decoration-none dropdown-toogle"
 									data-bs-toggle="dropdown"
 								>
-									<img
-										//src={userData.avatar_url}
-										src={
-											"https://avatars.githubusercontent.com/u/85259595?s=40&v=4"
-										}
-										alt="mdo"
-										width="32"
-										height="32"
-										className="rounded-circle"
-									></img>
+									{userData ? (
+										<img
+											src={userData.avatar_url}
+											width="32"
+											height="32"
+											className="rounded-circle"
+										></img>
+									) : (
+										<img
+											src={
+												"https://avatars.githubusercontent.com/u/85259595?s=40&v=4"
+											}
+											alt="mdo"
+											width="32"
+											height="32"
+											className="rounded-circle"
+										></img>
+									)}
 								</a>
 								<ul className="dropdown-menu text-snall">
 									<li>

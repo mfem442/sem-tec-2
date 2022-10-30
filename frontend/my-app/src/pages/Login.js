@@ -27,38 +27,50 @@ function Login({ setToken, setUserData }) {
 				} else {
 					console.log("no se puede");
 				}
-				data.json().then((data) => {
-					if (succesful) {
-						localStorage.setItem("token", data.access_token);
-						console.log("TOKENSET: " + data.access_token);
-						fetch(API_URL + "/users/me/", {
-							headers: {
-								Authorization: "Bearer" + data.access_token,
-							},
-						}).then((data) => {
-							console.log("DATASET1: " + data);
-							data.json().then((data) => {
-								fetch(
-									"https://api.github.com/users/" +
-										data.github_user
-								).then((data) =>
+				data.json()
+
+					.then((data) => {
+						if (succesful) {
+							localStorage.setItem("token", data.access_token);
+							fetch(API_URL + "/users/me/", {
+								headers: {
+									Authorization: "Bearer" + data.access_token,
+								},
+							})
+								.then((data) => {
 									data.json().then((data) => {
-										localStorage.setItem(
-											"userData",
-											JSON.stringify(data)
-										);
-										setUserData(data);
-										console.log("DATASET2: " + data);
-										setToken(localStorage.getItem("token"));
-										navigate(urlParams.get("next") || "/");
-									})
-								);
-							});
-						});
-					} else {
-						throw new Error(data.detail);
-					}
-				});
+										fetch(
+											"https://api.github.com/users/" +
+												data.github_user
+										)
+											.then((data) => data.json())
+											.then((data) => {
+												localStorage.setItem(
+													"userData",
+													JSON.stringify(data)
+												);
+												setUserData(data);
+												console.log(
+													"DATASET2: " + data
+												);
+												setToken(
+													localStorage.getItem(
+														"token"
+													)
+												);
+												navigate(
+													urlParams.get("next") || "/"
+												);
+											})
+											.catch((data) => alert(data));
+									});
+								})
+								.catch((data) => alert(data));
+						} else {
+							throw new Error(data.detail);
+						}
+					})
+					.catch((data) => alert(data));
 			})
 			.catch((data) => alert(data));
 	}
