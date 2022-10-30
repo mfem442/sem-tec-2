@@ -78,9 +78,9 @@ function UserForm({ createUser }) {
 		e.preventDefault();
 		console.log("Creating user");
 		let data = {
-			email: email.current.value,
-			password: password.current.value,
-			githubUser: githubUser.current.value,
+			"email": email.current.value,
+			"password": password.current.value,
+			"githubUser": githubUser.current.value,
 		};
 		createUser(data);
 		email.current.value = "";
@@ -180,7 +180,7 @@ function UserPage({ token }) {
 		fetch(API_URL + "/users/", {
 			method: "POST",
 			headers: {
-				Authorization: "Bearer" + token,
+				"Authorization": "Bearer " + token,
 				"Content-Type": "application/json",
 			},
 			data: JSON.stringify(userData),

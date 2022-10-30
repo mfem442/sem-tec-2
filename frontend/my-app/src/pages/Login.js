@@ -16,50 +16,48 @@ function Login({ setToken, setUserData }) {
 		fetch(API_URL + "/token", {
 			method: "POST",
 			body: new URLSearchParams({
-				username: email.current.value,
-				password: password.current.value,
+				"username": email.current.value,
+				"password": password.current.value,
 			}),
-		}).then((data) => {
+		})
+		.then((data) => {
 			if (data.status === 200) {
 				succesful = true;
-				console.log("se pudo");
-			} else {
-				console.log("no se puede");
 			}
-			data.json()
-
-				.then((data) => {
-					if (succesful) {
-						localStorage.setItem("token", data.access_token);
-						fetch(API_URL + "/users/me/", {
-							headers: {
-								Authorization: "Bearer" + data.access_token,
-							},
-						}).then((data) => {
-							data.json().then((data) => {
-								fetch(
-									"https://api.github.com/users/" +
-										data.github_user
-								)
-									.then((data) => data.json())
-									.then((data) => {
-										localStorage.setItem(
-											"userData",
-											JSON.stringify(data)
-										);
-										setUserData(data);
-										console.log("DATASET2: " + data);
-										setToken(localStorage.getItem("token"));
-										navigate(urlParams.get("next") || "/");
-									});
-							});
-						});
-					} else {
-						throw new Error(data.detail);
-					}
+			return data.json()
+		})
+		.then((data) => {
+			if (succesful) {
+				localStorage.setItem("token", data.access_token);
+				fetch(API_URL + "/users/me/", {
+					headers: {
+						"Authorization": "Bearer " + data.access_token,
+					},
 				})
-				.catch((data) => alert(data));
-		});
+				.then((data) => {
+					return data.json()
+				})
+				.then((data) => {
+					fetch(
+						"https://api.github.com/users/" +
+						data.github_user
+					)
+					.then((data) => data.json())
+					.then((data) => {
+						localStorage.setItem(
+							"userData",
+							JSON.stringify(data)
+						);
+						setUserData(data);
+						setToken(localStorage.getItem("token"));
+						navigate(urlParams.get("next") || "/");
+					});
+				});
+			} else {
+				throw new Error(data.detail);
+			}
+		})
+		.catch((data) => alert(data));
 	}
 	return (
 		<>
@@ -94,7 +92,6 @@ function Login({ setToken, setUserData }) {
 						me
 					</label>
 				</div>
-				<Link to="/profile"></Link>
 				<button type="submit" className="btn btn-primary">
 					Sign in
 				</button>

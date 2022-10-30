@@ -187,13 +187,11 @@ function TopBar({ userLogged, logout, userData }) {
 }
 
 function App() {
-	console.log("TOKEN: " + localStorage.getItem("token"));
-	console.log("DATA: " + localStorage.getItem("userData"));
+	console.log("TOKEN: "+localStorage.getItem("token"))
+	console.log("DATA: "+localStorage.getItem("userData"))
 	const [token, setToken] = useState(localStorage.getItem("token"));
 	const [userData, setUserData] = useState(
 		JSON.parse(localStorage.getItem("userData"))
-		//JSON.parse({ myUser })
-		//'{"email":"mafer@tec.mx","id":1,"is_active":"true","github_user":"mfem442","items":"[]",}'
 	);
 	function logout() {
 		localStorage.removeItem("token");
@@ -234,12 +232,7 @@ function App() {
 						</Route>
 						<Route
 							path="/profile"
-							element={
-								<Profile
-									name={"mfem442"}
-									email={"mafer@tec.mx"}
-								/>
-							}
+							element={<Profile userData={userData} />}
 						></Route>
 					</Routes>
 				</div>
